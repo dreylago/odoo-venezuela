@@ -18,7 +18,7 @@ msgstr ""
 #. module: l10n_ve_vat_ledger
 #: model:ir.model,name:l10n_ve_vat_ledger.model_account_vat_ledger
 msgid "Account VAT Ledger"
-msgstr "Libo de IVA"
+msgstr "Libro de IVA"
 
 #. module: l10n_ve_vat_ledger
 #: model:ir.actions.report,name:l10n_ve_vat_ledger.action_account_vat_ledger_report_xlsx
