@@ -120,6 +120,7 @@ result = withholdable_base_amount * 0.10
         return False
 
     def create_payment_withholdings(self, payment_group):
+        cnt = 0
         for tax in self.filtered(lambda x: x.withholding_type != 'none'):
             payment_withholding = self.env[
                 'account.payment'].search([
@@ -194,7 +195,8 @@ result = withholdable_base_amount * 0.10
                 vals['partner_type'] = payment_group.partner_type
                 vals['partner_id'] = payment_group.partner_id.id
                 payment_withholding = payment_withholding.create(vals)
-        return True
+                cnt += 1
+        return cnt > 0
 
 
     def get_period_payments_domain(self, payment_group):
