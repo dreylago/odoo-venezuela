@@ -28,7 +28,7 @@
                     type="action" 
                     attrs="{'invisible': ['|','|', 
                         ('payment_method_code', '!=', 'withholding'), ('partner_type', '!=', 'supplier'),
-                        ('payment_method_description', '==', 'Retención IVA')
+                        ('payment_method_description', '==', 'Retención IVA Proveedores')
                     ]}"/>
                 <button 
                     name="%(action_report_withholding_certificate_iva)d" 
@@ -37,7 +37,7 @@
                     type="action" 
                     attrs="{'invisible': ['|','|', 
                         ('payment_method_code', '!=', 'withholding'), ('partner_type', '!=', 'supplier'),
-                        ('payment_method_description', '!=', 'Retención IVA')
+                        ('payment_method_description', '!=', 'Retención IVA Proveedores')
                     ]}"/>
             </tree>
         </field>
