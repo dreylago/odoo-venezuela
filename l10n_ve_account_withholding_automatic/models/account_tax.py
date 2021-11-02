@@ -180,14 +180,23 @@ result = withholdable_base_amount * 0.10
                 payment_method = self.env.ref(
                     'l10n_ve_account_withholding.'
                     'account_payment_method_out_withholding')
-                journal = self.env['account.journal'].search([
-                    ('company_id', '=', tax.company_id.id),
-                    ('outbound_payment_method_ids', '=', payment_method.id),
-                    ('type', 'in', ['cash', 'bank']),
-                ], limit=1)
+                try:
+                    journal = self.env['account.journal'].search([
+                        ('company_id', '=', tax.company_id.id),
+                        ('outbound_payment_method_ids', '=', payment_method.id),
+                        ('id', '=', tax.withholding_sequence_id.l10n_latam_journal_id.id),
+                    ], limit=1)
+                except Exception:
+                    journal = False
+                if not journal:
+                    journal = self.env['account.journal'].search([
+                        ('company_id', '=', tax.company_id.id),
+                        ('outbound_payment_method_ids', '=', payment_method.id),
+                        ('type', 'in', ['cash', 'bank']),
+                    ], limit=1)                    
                 if not journal:
                     raise UserError(_(
-                        'No journal for withholdings found on company %s') % (
+                        '- No journal for withholdings found on company %s') % (
                         tax.company_id.name))
                 vals['journal_id'] = journal.id
                 vals['payment_method_id'] = payment_method.id
