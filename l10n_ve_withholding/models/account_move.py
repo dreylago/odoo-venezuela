@@ -45,8 +45,8 @@ class AccountMove(models.Model):
                 if rec.type in ['out_invoice']:
                     if rec.journal_id.sequence_control_id:        
                         l10n_ve_document_number = rec.env[
-                            'ir.sequence'].next_by_code(rec.journal_id.\
-                                sequence_control_id.code)
+                            'ir.sequence'].browse(rec.journal_id.
+                                sequence_control_id.id).next_by_id()
                         rec.write({
                             'l10n_ve_document_number': l10n_ve_document_number})
                     else:
