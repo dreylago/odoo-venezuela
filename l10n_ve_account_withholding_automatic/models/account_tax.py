@@ -7,6 +7,7 @@ import datetime
 import logging
 
 _logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class AccountTax(models.Model):
@@ -123,15 +124,23 @@ result = withholdable_base_amount * 0.10
         return False
 
     def create_payment_withholdings(self, payment_group):
+        cnt = dict(created=0, tax_accounts=0)
         for tax in self.filtered(lambda x: x.withholding_type != 'none'):
             _logger.warning('.--------------------------------------------')
             _logger.warning('ESTA ENTRANDO EN EL CREATE')
+            cnt['tax_accounts'] += 1
             payment_withholding = self.env[
                 'account.payment'].search([
                     ('payment_group_id', '=', payment_group.id),
                     ('tax_withholding_id', '=', tax.id),
                     ('automatic', '=', True),
                 ], limit=1)
+
+            if payment_withholding:
+                logger.info(f"payment id found {payment_withholding.id}")
+            else:
+                logger.info(f"no payment found")
+
             if (
                     tax.withholding_user_error_message and
                     tax.withholding_user_error_domain):
@@ -167,6 +176,7 @@ result = withholdable_base_amount * 0.10
                 # if on refresh no more withholding, we delete if it exists
                 if payment_withholding:
                     payment_withholding.unlink()
+                logger.info("unlink")
                 continue
 
             # we copy withholdable_base_amount on base_amount
@@ -181,17 +191,21 @@ result = withholdable_base_amount * 0.10
             #Utilizamos el comment para reflejar el porcentaje retenido.
             vals['comment_withholding'] = vals.get('comment_withholding')
             if payment_withholding:
+                logger.info("reusing a payment withholding")
                 payment_withholding.write(vals)
             else:
                 # TODO implementar devoluciones de retenciones
                 payment_method = self.env.ref(
                     'l10n_ve_account_withholding.'
                     'account_payment_method_out_withholding')
-                journal = self.env['account.journal'].search([
-                    ('company_id', '=', tax.company_id.id),
-                    ('outbound_payment_method_ids', '=', payment_method.id),
-                    ('type', 'in', ['cash', 'bank']),
-                ], limit=1)
+                try:
+                    journal = self.env['account.journal'].search([
+                        ('company_id', '=', tax.company_id.id),
+                        ('outbound_payment_method_ids', '=', payment_method.id),
+                        ('id', '=', tax.withholding_sequence_id.l10n_latam_journal_id.id),
+                    ], limit=1)
+                except Exception:
+                    journal = False
                 if not journal:
                     raise UserError(_(
                         'No journal for withholdings found on company %s') % (
@@ -202,6 +216,16 @@ result = withholdable_base_amount * 0.10
                 vals['partner_type'] = payment_group.partner_type
                 vals['partner_id'] = payment_group.partner_id.id
                 payment_withholding = payment_withholding.create(vals)
+                cnt['created'] += 1
+                logger.info("record created")
+
+        if cnt['tax_accounts'] == 0:
+            raise ValidationError(f'No {rec.partner_type} tax account ' 
+                f'for {rec.company_id.name}')
+
+        if cnt['created'] == 0:
+            logger.info("No records created")
+
         return True
 
 
@@ -250,6 +274,7 @@ result = withholdable_base_amount * 0.10
         previous_withholding_amount, with thos values the withholding amount
         will be calculated.
         """
+        logger.info("get_withholding_vals")
         self.ensure_one()
         withholding_amount_type = force_withholding_amount_type or \
             self.withholding_amount_type

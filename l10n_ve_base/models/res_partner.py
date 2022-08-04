@@ -18,7 +18,7 @@ class ResPartner(models.Model):
         ondelete='restrict',
         help=u"País",
         default=lambda self: self.env['res.country'].search(
-            [('name', '=', 'Venezuela')]
+            [('name', 'ilike', 'Venezuela')]
         )[0].id
     )
     state_id = fields.Many2one(

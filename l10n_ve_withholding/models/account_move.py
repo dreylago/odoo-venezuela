@@ -41,12 +41,34 @@ class AccountMove(models.Model):
         super(AccountMove, self)._post(soft)
         for rec in self:
             if rec.state == 'posted' and rec.l10n_ve_document_number == False:
+# <<<<<<< HEAD
                 if rec.move_type in ['out_invoice','out_refund']:
                     l10n_ve_document_number = rec.env[
                         'ir.sequence'].next_by_code(
                             'account.move.document.number')
                     rec.write(
                         {'l10n_ve_document_number': l10n_ve_document_number})
+# =======
+#                 if rec.type in ['out_invoice']:
+#                     today = datetime.strptime(
+#                         str(fields.Date.today()), "%Y-%m-%d")
+#                     invoice_date = datetime.strptime(
+#                         str(rec.invoice_date), "%Y-%m-%d")
+#                     if invoice_date > today:
+#                         raise ValidationError(
+#                             _("La factura no puede ser mayor a la fecha actual"+
+#                                 " por favor verifique la fecha de su factura."))
+#                     if rec.journal_id.sequence_control_id:        
+#                         l10n_ve_document_number = rec.env[
+#                             'ir.sequence'].browse(rec.journal_id.
+#                                 sequence_control_id.id).next_by_id()
+#                         rec.write({
+#                             'l10n_ve_document_number': l10n_ve_document_number})
+#                     # else:
+#                     #     raise ValidationError(
+#                     # _("El diario por el cual está emitiendo la factura no"+
+#                     #     " tiene secuencia para número de control"))
+# >>>>>>> 683e842 (drey changes)
 
 
 class AccountMoveLine(models.Model):

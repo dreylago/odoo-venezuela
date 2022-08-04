@@ -4,7 +4,9 @@
 ##############################################################################
 from odoo import models, api, fields, _
 from odoo.exceptions import ValidationError
+import logging
 
+logger = logging.getLogger(__name__)
 
 class AccountPaymentGroup(models.Model):
 
@@ -47,7 +49,7 @@ class AccountPaymentGroup(models.Model):
                 ('type_tax_use', '=', rec.partner_type),
                 ('company_id', '=', rec.company_id.id),
             ]).create_payment_withholdings(rec)
-
+        
     def confirm(self):
         res = super(AccountPaymentGroup, self).confirm()
         for rec in self:
