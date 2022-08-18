@@ -92,7 +92,8 @@
                             <th class="text-center">1</th>
                             <th class="text-center"><span t-esc="report_date"/></th>
                             <th class="text-center"><span t-field="o.communication"/></th>
-                            <th class="text-center"><span t-field="o.invoice_ids[0].l10n_ve_document_number"/></th>
+                            <th class="text-center">****</th>
+ <!--                           <th class="text-center"><span t-field="o.invoice_ids[0].l10n_ve_document_number"/></th> -->
                             <th class="text-center"></th>
                             <th class="text-center"></th>
                             <th class="text-center">01</th>
