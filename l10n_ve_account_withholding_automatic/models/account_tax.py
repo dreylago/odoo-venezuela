@@ -93,6 +93,7 @@ result = withholdable_base_amount * 0.10
     #     help="For taxes of type percentage, enter % ratio between 0-1."
     #     )
 
+
     @api.constrains(
         'withholding_non_taxable_amount',
         'withholding_non_taxable_minimum')
@@ -198,19 +199,7 @@ result = withholdable_base_amount * 0.10
                 payment_method = self.env.ref(
                     'l10n_ve_account_withholding.'
                     'account_payment_method_out_withholding')
-                try:
-                    journal = self.env['account.journal'].search([
-                        ('company_id', '=', tax.company_id.id),
-                        ('outbound_payment_method_ids', '=', payment_method.id),
-                        ('id', '=', tax.withholding_sequence_id.l10n_latam_journal_id.id),
-                    ], limit=1)
-                except Exception:
-                    journal = False
-                if not journal:
-                    raise UserError(_(
-                        'No journal for withholdings found on company %s') % (
-                        tax.company_id.name))
-                vals['journal_id'] = journal.id
+                vals['journal_id'] = self.l10n_latam_journal_id.id
                 vals['payment_method_id'] = payment_method.id
                 vals['payment_type'] = 'outbound'
                 vals['partner_type'] = payment_group.partner_type
@@ -220,8 +209,7 @@ result = withholdable_base_amount * 0.10
                 logger.info("record created")
 
         if cnt['tax_accounts'] == 0:
-            raise ValidationError(f'No {rec.partner_type} tax account ' 
-                f'for {rec.company_id.name}')
+            raise ValidationError(f'No tax account')
 
         if cnt['created'] == 0:
             logger.info("No records created")

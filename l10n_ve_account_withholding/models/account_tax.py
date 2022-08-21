@@ -56,6 +56,8 @@ class AccountTax(models.Model):
         copy=False
     )
 
+    l10n_latam_journal_id = fields.Many2one('account.journal', string="Diario")
+
     @api.model
     def create(self, vals):
         tax = super(AccountTax, self).create(vals)
