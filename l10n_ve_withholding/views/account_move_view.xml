@@ -14,10 +14,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//div[@name='journal_div']" position="after">
                     <field name="l10n_ve_document_number"
-                        attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund','out_receipt'))]}" 
-                        readonly="1" string="Control Number"/>
-                    <field name="l10n_ve_document_number"
-                        attrs="{'readonly': [('state','!=','draft')], 'invisible': [('move_type', 'not in', ('in_invoice', 'in_refund','in_receipt'))]}" 
+                        attrs="{'invisible': [('move_type', 'not in', ('in_invoice', 'in_refund','in_receipt'))]}" 
                         string="Control Number"/>
                 </xpath>
             </field>
