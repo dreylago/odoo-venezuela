@@ -91,9 +91,27 @@
                         <tr>
                             <th class="text-center">1</th>
                             <th class="text-center"><span t-esc="report_date"/></th>
-                            <th class="text-center"><span t-field="o.communication"/></th>
-                            <th class="text-center">****</th>
- <!--                           <th class="text-center"><span t-field="o.invoice_ids[0].l10n_ve_document_number"/></th> -->
+<!--                             esto no funciona por alguna razon que
+                            no entiendo, y como el certificate islr 
+                            hace un loop extrano con el payment_group pero al menos funciona, entonces vamos a hacer lo mismo                            
+                            <th class="text-center"><span t-field="o.move_id.ref"/></th>
+                            <th class="text-center"><span t-field="o.move_id.l10n_ve_document_number"/></th>
+ -->
+                            <th class="text-center">
+                            <t t-foreach="o.payment_group_id.to_pay_move_line_ids" t-as="i">
+                                    <t t-if="i.move_id.move_type == out_invoice">
+                                        <span t-field="i.move_id.name"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span t-field="i.move_id.ref"/>
+                                    </t>
+                                </t>
+                            </th>
+                            <th class="text-center">
+                            <t t-foreach="o.payment_group_id.to_pay_move_line_ids" t-as="i">
+                                    <span t-field="i.move_id.l10n_ve_document_number"/>
+                                </t>
+                            </th>
                             <th class="text-center"></th>
                             <th class="text-center"></th>
                             <th class="text-center">01</th>

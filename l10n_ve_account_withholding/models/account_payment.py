@@ -4,6 +4,9 @@
 ##############################################################################
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountPayment(models.Model):
@@ -26,9 +29,12 @@ class AccountPayment(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+
     communication = fields.Text('Notas')
+
     
-    def post(self):
+    def action_post(self):
+        _logger.warning("entrando al post")
         without_number = self.filtered(
             lambda x: x.tax_withholding_id and not x.withholding_number)
 
@@ -41,12 +47,15 @@ class AccountPayment(models.Model):
                 'impuestos de retención correspondientes. Id de pagos: %s') % (
                 without_sequence.ids))
 
+        _logger.warning("entrando a next by id")
         # a los que tienen secuencia les setamos el numero desde secuencia
         for payment in (without_number - without_sequence):
+            _logger.warning(f"payment_id = {payment.id}")
             payment.withholding_number = \
                 payment.tax_withholding_id.withholding_sequence_id.next_by_id()
 
-        return super(AccountPayment, self).post()
+        return super(AccountPayment, self).action_post()
+
 
     def _prepare_payment_moves(self):
         all_move_vals = []

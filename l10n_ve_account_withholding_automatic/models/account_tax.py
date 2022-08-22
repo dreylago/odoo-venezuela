@@ -199,7 +199,7 @@ result = withholdable_base_amount * 0.10
                 payment_method = self.env.ref(
                     'l10n_ve_account_withholding.'
                     'account_payment_method_out_withholding')
-                vals['journal_id'] = self.l10n_latam_journal_id.id
+                vals['journal_id'] = tax.l10n_latam_journal_id.id
                 vals['payment_method_id'] = payment_method.id
                 vals['payment_type'] = 'outbound'
                 vals['partner_type'] = payment_group.partner_type
